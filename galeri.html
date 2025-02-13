@@ -13,10 +13,10 @@
             text-align: center;
             color: #d63384;
             padding: 20px;
-            overflow-y: auto;
             margin: 0;
-            position: relative;
+            overflow-x: hidden;
         }
+
         .background-video {
             position: fixed;
             top: 0;
@@ -26,25 +26,48 @@
             object-fit: cover;
             z-index: -1;
         }
-        @keyframes bgAnimation {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+
         .navbar {
             display: flex;
-            justify-content: flex-start;
+            justify-content: space-between;
             align-items: center;
             background: linear-gradient(45deg, #ff4d6d, #ff9a9e);
-            padding: 15px 40px;
+            padding: 15px 20px;
             position: fixed;
             top: 0;
             width: 100%;
             z-index: 1000;
             box-shadow: 0 4px 8px rgba(255, 77, 109, 0.5);
         }
+
         .navbar .logo {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: white;
+        }
+
+        .menu-toggle {
+            display: none;
             font-size: 1.8em;
+            color: white;
+            cursor: pointer;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            background: linear-gradient(45deg, #ff4d6d, #ff9a9e);
+            padding: 15px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(255, 77, 109, 0.5);
+        }
+        .navbar .logo {
+            font-size: 1.5em;
             font-weight: bold;
             color: white;
             margin-right: 20px;
@@ -57,33 +80,23 @@
             margin: 0 15px;
             transition: color 0.3s;
         }
-        .navbar a:hover {
-            color: #ffe0e6;
-        }
         h1 {
             margin-top: 100px;
-            font-size: 3em;
-            font-weight: bold;
+            font-size: 2.5em;
             color: #ff4d6d;
-            text-shadow: 2px 2px 10px rgba(255, 77, 109, 0.5);
         }
+
         .filter-buttons button {
             background: linear-gradient(45deg, #ff4d6d, #ff9a9e);
             border: none;
             color: white;
-            padding: 12px 24px;
-            margin: 10px;
-            font-size: 1.2em;
+            padding: 10px 20px;
+            font-size: 1em;
             border-radius: 30px;
             cursor: pointer;
-            box-shadow: 0 4px 8px rgba(255, 77, 109, 0.5);
-            transition: all 0.3s ease;
+            margin: 5px;
         }
-        .filter-buttons button:hover {
-            background: linear-gradient(45deg, #ff9a9e, #ff4d6d);
-            transform: scale(1.1);
-            box-shadow: 0 6px 12px rgba(255, 77, 109, 0.7);
-        }
+
         .gallery {
             display: flex;
             flex-wrap: wrap;
@@ -113,6 +126,7 @@
         .image:hover {
             transform: scale(1.05);
         }
+
         .popup {
             display: none;
             position: fixed;
@@ -120,37 +134,52 @@
             left: 50%;
             transform: translate(-50%, -50%);
             background: white;
-            padding: 20px;
+            padding: 10px;
             border-radius: 10px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
             width: 90%;
-            max-width: 400px;
+            max-width: 300px; /* Lebih kecil dari sebelumnya */
             text-align: center;
         }
+
         .popup img {
-            width: 100%;
-            height: auto;
+            width: 100%; /* Supaya gambar responsif */
+            max-height: 250px; /* Batas tinggi gambar */
             object-fit: cover;
-            border-radius: 10px;
+            border-radius: 5px;
         }
-        .popup p {
-            margin-top: 10px;
-            font-size: 1.2em;
-            color: #d63384;
-        }
+
         .popup button {
             margin-top: 10px;
             background: #ff4d6d;
-            border: none;
             color: white;
-            padding: 10px 20px;
-            font-size: 1em;
+            border: none;
+            padding: 8px 15px;
             border-radius: 5px;
             cursor: pointer;
-            transition: 0.3s;
         }
-        .popup button:hover {
-            background: #ff9a9e;
+
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+
+            .nav {
+                display: none;
+                flex-direction: column;
+                background: #ff4d6d;
+                position: absolute;
+                top: 60px;
+                left: 0;
+                width: 100%;
+                padding: 10px 0;
+                text-align: center;
+            }
+
+            .nav.show {
+                display: flex;
+            }
         }
     </style>
 </head>
@@ -158,15 +187,17 @@
     <video class="background-video" autoplay loop muted>
         <source src="Love_bg.mp4" type="video/mp4">
     </video>
+
     <div class="navbar">
         <div class="logo">💖 Love Gallery 💖</div>
-        <div>
+        <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+        <div class="nav">
             <a href="index.html">Home</a>
             <a href="galeri.html">Galeri</a>
             <a href="#contact">Kontak</a>
         </div>
     </div>
-    <div class="love-container"></div>
+
     <h1>💖 Galeri Cinta 💖</h1>
     <div class="filter-buttons">
         <button onclick="filterImages('all')">Semua</button>
@@ -174,47 +205,55 @@
         <button onclick="filterImages('fadhil')">Fadhil</button>
         <button onclick="filterImages('couple')">Pasangan</button>
     </div>
+
     <div class="gallery" id="gallery">
-        <img src="love1.jpeg" class="image couple" alt="Gambar Pasangan" onclick="openPopup(this.src, 'Foto Pasangan 1')">
-        <img src="love2.jpeg" class="image couple" alt="Gambar Pasangan" onclick="openPopup(this.src, 'Foto Pasangan 1')">
-        <img src="love3.jpeg" class="image couple" alt="Gambar Pasangan" onclick="openPopup(this.src, 'Foto Pasangan 1')">
-        <img src="love4.jpg" class="image couple" alt="Gambar Pasangan" onclick="openPopup(this.src, 'Foto Pasangan 1')">
-        <img src="love5.jpg" class="image couple" onclick="openPopup(this.src, 'Foto Pasangan 1')" alt="Gambar Pasangan">
-        <img src="love6.jpg" class="image couple" onclick="openPopup(this.src, 'Foto Pasangan 1')" alt="Gambar Pasangan">
-        <img src="love7.jpg" class="image couple" onclick="openPopup(this.src, 'Foto Pasangan 1')" alt="Gambar Pasangan">
-        <img src="love8.jpg" class="image couple" onclick="openPopup(this.src, 'Foto Pasangan 1')" alt="Gambar Pasangan">
-        <img src="love9.jpg" class="image sesel" onclick="openPopup(this.src, 'Foto Pasangan 1')" alt="Gambar Sesel">
-        <img src="love10.jpg" class="image sesel" onclick="openPopup(this.src, 'Foto Pasangan 1')" alt="Gambar Sesel">
-        <img src="love11.jpg" class="image couple" onclick="openPopup(this.src, 'Foto Pasangan 1')" alt="Gambar Pasangan">
-        <img src="love12.jpg" class="image couple" onclick="openPopup(this.src, 'Foto Pasangan 1')" alt="Gambar Pasangan">
+        <img src="love1.jpeg" class="image couple" alt="Gambar Romantis">
+        <img src="love2.jpeg" class="image couple" alt="Gambar Pasangan">
+        <img src="love3.jpeg" class="image couple" alt="Gambar Romantis">
+        <img src="love4.jpg" class="image couple" alt="Gambar Romantis">
+        <img src="love5.jpg" class="image couple" alt="Gambar Pasangan">
+        <img src="love6.jpg" class="image couple" alt="Gambar Romantis">
+        <img src="love7.jpg" class="image couple" alt="Gambar Romantis">
+        <img src="love8.jpg" class="image couple" alt="Gambar Pasangan">
+        <img src="love9.jpg" class="image sesel" alt="Gambar Romantis">
+        <img src="love10.jpg" class="image sesel" alt="Gambar Romantis">
+        <img src="love11.jpg" class="image couple" alt="Gambar Pasangan">
+        <img src="love12.jpg" class="image couple" alt="Gambar Romantis">
     </div>
-    
+
     <div class="popup" id="popup">
         <img id="popupImage" src="">
         <p id="popupText"></p>
         <button onclick="closePopup()">Tutup</button>
     </div>
-    
+
     <script>
-        
-        function openPopup(src, text) {
-            document.getElementById('popupImage').src = src;
-            document.getElementById('popupText').innerText = text;
-            document.getElementById('popup').style.display = 'block';
+        function toggleMenu() {
+            document.querySelector('.nav-links').classList.toggle('show');
         }
-        function closePopup() {
-            document.getElementById('popup').style.display = 'none';
-        }
+
         function filterImages(category) {
             let images = document.querySelectorAll('.image');
             images.forEach(img => {
-                if (category === 'all' || img.classList.contains(category)) {
-                    img.style.display = 'inline';
-                } else {
-                    img.style.display = 'none';
-                }
+                img.style.display = category === 'all' || img.classList.contains(category) ? 'block' : 'none';
             });
         }
+        document.querySelectorAll('.gallery img').forEach(img => {
+        img.addEventListener('click', function() {
+            let popup = document.getElementById('popup');
+            let popupImage = document.getElementById('popupImage');
+            let popupText = document.getElementById('popupText');
+
+            popupImage.src = this.src;
+            popupText.textContent = this.alt;
+            popup.style.display = 'block';
+        });
+    });
+
+        function closePopup() {
+        document.getElementById('popup').style.display = 'none';
+        }
+
     </script>
 </body>
 </html>
